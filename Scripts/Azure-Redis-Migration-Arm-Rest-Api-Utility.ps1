@@ -122,7 +122,7 @@ function Print-Response(
     }
     else
     {
-        Write-Host "The request is failed. Status Code: $statusCode" -ForegroundColor Red
+        Write-Host "The request has encountered a failure. Status Code: $statusCode" -ForegroundColor Red
     }
 
     # Display relevant Azure headers if available
@@ -162,7 +162,7 @@ switch ($Action)
 
         if ($TrackMigration.IsPresent)
         {
-            Write-Host "Migration will be tracked until completion."
+            Write-Host "This command will trigger the migration and will track the long running operation until its completion."
             $response = Invoke-AzRestMethod `
                 -Method PUT `
                 -Path "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Cache/RedisEnterprise/$AmrCacheName/migrations/default?api-version=$ArmApiVersion" `
@@ -171,7 +171,7 @@ switch ($Action)
         }
         else
         {
-            Write-Host "Migration will NOT be tracked. Use the 'Status' action to check migration status."
+            Write-Host "This command will trigger the migration and will exit immediately. It will not track the long running migration operation until its completion. Please use the 'Status' action to check and track the migration completion status"
             $response = Invoke-AzRestMethod `
                 -Method PUT `
                 -Path "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Cache/RedisEnterprise/$AmrCacheName/migrations/default?api-version=$ArmApiVersion" `
@@ -198,7 +198,7 @@ switch ($Action)
     {
         if ($TrackMigration.IsPresent)
         {
-            Write-Host "Cancellation will be tracked until completion."
+            Write-Host "This command will trigger the cancellation and will track the long running operation until its completion."
             $response = Invoke-AzRestMethod `
                 -Method POST `
                 -Path "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Cache/RedisEnterprise/$AmrCacheName/migrations/default/cancel?api-version=$ArmApiVersion" `
@@ -206,7 +206,7 @@ switch ($Action)
         }
         else
         {
-            Write-Host "Cancellation will NOT be tracked. Use the 'Status' action to check migration status."
+            Write-Host "This command will trigger the cancellation and will exit immediately. It will not track the long running operation until its completion. Use the 'Status' action to check and track migration cancellation status."
             $response = Invoke-AzRestMethod `
                 -Method POST `
                 -Path "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Cache/RedisEnterprise/$AmrCacheName/migrations/default/cancel?api-version=$ArmApiVersion"
