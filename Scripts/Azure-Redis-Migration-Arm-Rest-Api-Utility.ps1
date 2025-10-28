@@ -22,11 +22,11 @@
 .PARAMETER Help
     If set, displays help information about the script (default is $false).
 .EXAMPLE
-    .\Azure-Redis-Migration-Arm-Rest-Api-Utility.ps1 -Action Migrate -SourceResourceId "/subscriptions/xxxxx/resourceGroups/rg1/providers/Microsoft.Cache/Redis/redis1" -AmrCacheName "myAmrCache" -ResourceGroupName "rg1" -SubscriptionId "xxxx-xxxx-xxxx-xxxx" -TrackMigration
+    .\Azure-Redis-Migration-Arm-Rest-Api-Utility.ps1 -Action Migrate -SourceResourceId "/subscriptions/xxxxx/resourceGroups/rg1/providers/Microsoft.Cache/Redis/redis1" -TargetResourceId "/subscriptions/xxxxx/resourceGroups/rg1/providers/Microsoft.Cache/redisEnterprise/amr1" -TrackMigration
     Initiates a migration and tracks its progress.
-    .\Azure-Redis-Migration-Arm-Rest-Api-Utility.ps1 -Action Status -AmrCacheName "myAmrCache" -ResourceGroupName "rg1" -SubscriptionId "xxxx-xxxx-xxxx-xxxx"
+    .\Azure-Redis-Migration-Arm-Rest-Api-Utility.ps1 -Action Status -TargetResourceId "/subscriptions/xxxxx/resourceGroups/rg1/providers/Microsoft.Cache/redisEnterprise/amr1"
     Checks the status of the migration.
-    .\Azure-Redis-Migration-Arm-Rest-Api-Utility.ps1 -Action Cancel -AmrCacheName "myAmrCache" -ResourceGroupName "rg1" -SubscriptionId "xxxx-xxxx-xxxx-xxxx"
+    .\Azure-Redis-Migration-Arm-Rest-Api-Utility.ps1 -Action Cancel -TargetResourceId "/subscriptions/xxxxx/resourceGroups/rg1/providers/Microsoft.Cache/redisEnterprise/amr1"
     Cancels the migration.
 .NOTES
     This script requires the Az PowerShell module.
@@ -43,16 +43,10 @@ param
     [string] $SourceResourceId,
 
     [Parameter()]
-    [string] $AmrCacheName,
+    [string] $TargetResourceId,
 
     [Parameter()]
-    [string] $ResourceGroupName,
-
-    [Parameter()]
-    [string] $SubscriptionId,
-
-    [Parameter()]
-    [ValidateSet("AzureCloud")]
+    [ValidateSet("Canary","AzureCloud")]
     [string] $Environment = "AzureCloud",
 
     [Parameter()]
@@ -77,6 +71,17 @@ if ($Help)
 {
     Show-Help
     exit 0
+}
+
+# Parse the TargetResourceId (Azure Managed Redis resourceId)
+$pattern = '(?i)^/subscriptions/(?<SubscriptionId>[^/]+)/resourceGroups/(?<ResourceGroupName>[^/]+)/providers/[^/]+/redisEnterprise/(?<AmrCacheName>[^/]+)(?:/.*)?/?$'
+
+if ($TargetResourceId -match $pattern) {
+    $SubscriptionId = $Matches.SubscriptionId
+    $ResourceGroupName = $Matches.ResourceGroupName
+    $AmrCacheName = $Matches.AmrCacheName
+} else {
+    throw "TargetResourceId is not parsed correctly."
 }
 
 function Login-ToAzure
