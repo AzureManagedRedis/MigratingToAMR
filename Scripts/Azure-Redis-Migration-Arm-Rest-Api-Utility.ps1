@@ -1,8 +1,8 @@
 <#
 .SYNOPSIS
-    Utility script to manage cache migration for Azure Cache for Redis resources using ARM REST API.
+    Script for migrating a cache from Azure Cache for Redis to Azure Managed Redis using ARM REST APIs.
 .DESCRIPTION
-    This script allows you to initiate, check the status of, or cancel a migration for Azure Cache for Redis resources.
+    This script allows you to initiate, check the status of, or cancel a migration from an Azure Cache for Redis resource to Azure Managed Redis.
 .PARAMETER Action
     The action to perform: "Migrate", "Status", or "Cancel".
 .PARAMETER SourceResourceId
@@ -14,7 +14,7 @@
 .PARAMETER SubscriptionId
     The subscription ID that contains both the source and target resources.
 .PARAMETER Environment
-    The Azure environment to use (default is "AzureCloud").
+    The Azure environment to use (default is the public "AzureCloud").
 .PARAMETER TrackMigration
     If set, the script will wait for the migration operation to complete (default is $false).
 .PARAMETER Verbose
@@ -52,7 +52,7 @@ param
     [string] $SubscriptionId,
 
     [Parameter()]
-    [ValidateSet("Dogfood", "Canary", "AzureCloud")]
+    [ValidateSet("AzureCloud")]
     [string] $Environment = "AzureCloud",
 
     [Parameter()]
@@ -98,7 +98,7 @@ function Login-ToAzure
         Connect-AzAccount -EnvironmentName $Environment -Subscription $SubscriptionId -WarningAction SilentlyContinue | Out-Null
 
         $context = Get-AzContext
-        Write-Host "Logged in to Azure as '$($context.Account.Id)' and switched current subscription to '$($context.Subscription.Id)'"
+        Write-Host "Logged in to $($context.Environment.Name) as '$($context.Account.Id)' and selected subscription '$($context.Subscription.Id)'"
     }
 
     Write-Host
