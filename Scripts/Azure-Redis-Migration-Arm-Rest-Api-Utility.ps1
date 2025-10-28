@@ -7,12 +7,8 @@
     The action to perform: "Migrate", "Status", or "Cancel".
 .PARAMETER SourceResourceId
     The resource ID of the source Azure Cache for Redis resource.
-.PARAMETER AmrCacheName
-    The name of the target Azure Managed Redis resource.
-.PARAMETER ResourceGroupName
-    The name of the resource group containing the Azure Managed Redis resource.
-.PARAMETER SubscriptionId
-    The subscription ID that contains both the source and target resources.
+.PARAMETER TargetResourceId
+    The resource ID of the target Azure Managed Redis resource.
 .PARAMETER Environment
     The Azure environment to use (default is the public "AzureCloud").
 .PARAMETER TrackMigration
