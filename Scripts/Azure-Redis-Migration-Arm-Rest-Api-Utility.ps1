@@ -9,10 +9,13 @@
     The resource ID of the source Azure Cache for Redis resource.
 .PARAMETER TargetResourceId
     The resource ID of the target Azure Managed Redis resource.
+.PARAMETER ForceMigrate
+    If set to $true, migration proceeds even when source/target cache parity validation returns warnings.
+    If set to $false (default), migration is blocked when validation returns any warning.
 .PARAMETER Environment
     The Azure environment to use (default is the public "AzureCloud").
 .PARAMETER TrackMigration
-    If set, the script will wait for the migration operation to complete (default is $false).
+    If set, the script waits for the migration operation to complete (default is $false).
 .PARAMETER Verbose
     If set, the script will output detailed information about its operations (default is $false).
 .PARAMETER Help
@@ -20,6 +23,8 @@
 .EXAMPLE
     .\Azure-Redis-Migration-Arm-Rest-Api-Utility.ps1 -Action Migrate -SourceResourceId "/subscriptions/xxxxx/resourceGroups/rg1/providers/Microsoft.Cache/Redis/redis1" -TargetResourceId "/subscriptions/xxxxx/resourceGroups/rg1/providers/Microsoft.Cache/redisEnterprise/amr1" -TrackMigration
     Initiates a migration and tracks its progress.
+    .\Azure-Redis-Migration-Arm-Rest-Api-Utility.ps1 -Action Migrate -SourceResourceId "/subscriptions/xxxxx/resourceGroups/rg1/providers/Microsoft.Cache/Redis/redis1" -TargetResourceId "/subscriptions/xxxxx/resourceGroups/rg1/providers/Microsoft.Cache/redisEnterprise/amr1" -ForceMigrate $true
+    Initiates a migration and forces migration when parity validation returns warnings.
     .\Azure-Redis-Migration-Arm-Rest-Api-Utility.ps1 -Action Status -TargetResourceId "/subscriptions/xxxxx/resourceGroups/rg1/providers/Microsoft.Cache/redisEnterprise/amr1"
     Checks the status of the migration.
     .\Azure-Redis-Migration-Arm-Rest-Api-Utility.ps1 -Action Cancel -TargetResourceId "/subscriptions/xxxxx/resourceGroups/rg1/providers/Microsoft.Cache/redisEnterprise/amr1"
@@ -40,6 +45,9 @@ param
 
     [Parameter()]
     [string] $TargetResourceId,
+
+    [Parameter()]
+    [bool] $ForceMigrate = $false,
 
     [Parameter()]
     [string] $Environment = "AzureCloud",
@@ -155,6 +163,7 @@ switch ($Action)
             properties = @{
                 sourceResourceId  = $SourceResourceId;
                 cacheResourceType = "AzureCacheForRedis";
+                forceMigrate      = $ForceMigrate;
                 switchDns         = $true;
                 skipDataMigration = $true;
             };
