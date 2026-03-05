@@ -14,7 +14,7 @@
     If set to $false (default), migration is blocked when validation returns any warning.
 .PARAMETER Environment
     The Azure environment to use (default is the public "AzureCloud").
-    Allowed values: "AzureCloud", "AzureChinaCloud", "AzureUSGovernment", "AzureGermanCloud".
+    Some possible values: "AzureCloud", "AzureChinaCloud", "AzureUSGovernment", "AzureGermanCloud".
 .PARAMETER TrackMigration
     If set, the script will wait for the migration operation to complete (default is $false).
 .PARAMETER Verbose
@@ -53,7 +53,6 @@ param
     [bool] $ForceMigrate = $false,
 
     [Parameter()]
-    [ValidateSet("AzureCloud", "AzureChinaCloud", "AzureUSGovernment", "AzureGermanCloud")]
     [string] $Environment = "AzureCloud",
 
     [Parameter()]
